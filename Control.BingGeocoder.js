@@ -28,27 +28,24 @@ L.Control.BingGeocoder = L.Control.extend({
 
 		var form = this._form = L.DomUtil.create('form', className + '-form');
 
-		var input = this._input = document.createElement('input');
-		input.type = "text";
+		var input = this._input = L.DomUtil.create('input', className + '-input', form);
+		input.type = 'text';
 
-		var submit = document.createElement('button');
-		submit.type = "submit";
+		var submit = L.DomUtil.create('button', className + '-button', form);
+		submit.type = 'submit';
 		submit.innerHTML = this.options.text;
 
-		form.appendChild(input);
-		form.appendChild(submit);
-
-		L.DomEvent.addListener(form, 'submit', this._geocode, this);
+		L.DomEvent.on(form, 'submit', this._geocode, this);
 
 		if (this.options.collapsed) {
-			L.DomEvent.addListener(container, 'mouseover', this._expand, this);
-			L.DomEvent.addListener(container, 'mouseout', this._collapse, this);
+			L.DomEvent.on(container, 'mouseover', this._expand, this);
+			L.DomEvent.on(container, 'mouseout', this._collapse, this);
 
 			var link = this._layersLink = L.DomUtil.create('a', className + '-toggle', container);
 			link.href = '#';
 			link.title = 'Bing Geocoder';
 
-			L.DomEvent.addListener(link, L.Browser.touch ? 'click' : 'focus', this._expand, this);
+			L.DomEvent.on(link, L.Browser.touch ? 'click' : 'focus', this._expand, this);
 
 			this._map.on('movestart', this._collapse, this);
 		} else {
@@ -62,7 +59,7 @@ L.Control.BingGeocoder = L.Control.extend({
 
 	_geocode : function (event) {
 		L.DomEvent.preventDefault(event);
-		this._callbackId = "_l_binggeocoder_" + (this._callbackId++);
+		this._callbackId = '_l_binggeocoder_' + (this._callbackId++);
 		window[this._callbackId] = L.Util.bind(this.options.callback, this);
 
 		var params = {
@@ -70,13 +67,12 @@ L.Control.BingGeocoder = L.Control.extend({
 			key : this.key,
 			jsonp : this._callbackId
 		},
-		url = "http://dev.virtualearth.net/REST/v1/Locations" + L.Util.getParamString(params),
-		script = document.createElement("script");
+		url = 'http://dev.virtualearth.net/REST/v1/Locations' + L.Util.getParamString(params),
+		script = L.DomUtil.create('script', '', document.getElementsByTagName('head')[0]);
 
-		script.type = "text/javascript";
+		script.type = 'text/javascript';
 		script.src = url;
 		script.id = this._callbackId;
-		document.getElementsByTagName("head")[0].appendChild(script);
 	},
 
 	_expand: function () {
@@ -84,6 +80,10 @@ L.Control.BingGeocoder = L.Control.extend({
 	},
 
 	_collapse: function () {
-		this._container.className = this._container.className.replace(' leaflet-control-geocoder-expanded', '');
+		L.DomUtil.removeClass(this._container, 'leaflet-control-geocoder-expanded');
 	}
 });
+
+L.control.bingGeocoder = function (key, options) {
+        return new L.Control.BingGeocoder(key, options);
+};
