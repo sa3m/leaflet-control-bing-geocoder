@@ -31,9 +31,8 @@ L.Control.BingGeocoder = L.Control.extend({
 		var input = this._input = L.DomUtil.create('input', className + '-input', form);
 		input.type = 'text';
 
-		var submit = L.DomUtil.create('button', className + '-button', form);
-		submit.type = 'submit';
-		submit.innerHTML = this.options.text;
+		var submit = this._createButton(className, this.options.text);
+		form.appendChild(submit);
 
 		L.DomEvent.on(form, 'submit', this._geocode, this);
 
@@ -55,6 +54,15 @@ L.Control.BingGeocoder = L.Control.extend({
 		container.appendChild(form);
 
 		return container;
+	},
+
+	_createButton: function(css, text) {
+		var btn = '<button type="submit" class="' + css + '-button" />' + text + '</button>';
+
+		var radioFragment = document.createElement('div');
+		radioFragment.innerHTML = btn;
+
+		return radioFragment.firstChild;
 	},
 
 	_geocode : function (event) {
@@ -85,5 +93,5 @@ L.Control.BingGeocoder = L.Control.extend({
 });
 
 L.control.bingGeocoder = function (key, options) {
-        return new L.Control.BingGeocoder(key, options);
+		return new L.Control.BingGeocoder(key, options);
 };
