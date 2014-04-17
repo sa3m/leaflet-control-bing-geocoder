@@ -32,3 +32,7 @@ var options = {
     }
 };
 ```
+
+# Demo
+
+Check out [this page](http://sa3m.github.io/leaflet-control-bing-geocoder/).
